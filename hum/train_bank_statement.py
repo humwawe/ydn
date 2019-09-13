@@ -25,10 +25,20 @@ def feature_fun(df):
     res = df.groupby('user_id')['statement_time'].min() == 0
     feature_bank_statement['is_statement_time'] = res * 1
 
-    res = df_2.groupby('user_id')['statement_time'].agg(['min', 'max', 'median'])
-    res.columns = ['min_statement_time', 'max_statement_time', 'median_statement_time']
-    res['diff_mm_statement_time'] = res['max_statement_time'] - res['min_statement_time']
-    feature_bank_statement = pm(feature_bank_statement, res)
+    transaction_type = [-1, 0, 1]
+    for i in transaction_type:
+        if i == -1:
+            tmp = df_2
+        else:
+            tmp = df_2[df_2['transaction_type'] == i]
+
+        suffix_t = str(i)
+        res = tmp.groupby('user_id')['statement_time'].agg(['min', 'max', 'median'])
+        res.columns = ['min_statement_time_t' + suffix_t, 'max_statement_time_t' + suffix_t,
+                       'median_statement_time_t' + suffix_t]
+        res['diff_mm_statement_time_t' + suffix_t] = res['max_statement_time_t' + suffix_t] - res[
+            'min_statement_time_t' + suffix_t]
+        feature_bank_statement = pm(feature_bank_statement, res)
 
     res = df.groupby('user_id')['income_type'].max() == 1
     feature_bank_statement['is_income_type'] = res * 1
