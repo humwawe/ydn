@@ -26,12 +26,12 @@ def feature_fun(df):
 
     main_bank = ['bank_id', 'bill_time', 'credit_limit']
     for i in main_bank:
-        tmp0 = train_credit_bill.groupby(['user_id', 'bank_id'])[i].count()
+        tmp0 = df.groupby(['user_id', 'bank_id'])[i].count()
         tmp1 = tmp0.groupby('user_id').max()
         tmp = pm(tmp0, tmp1)
         tmp = tmp[tmp[i + '_x'] == tmp[i + '_y']].reset_index().drop([i + '_x', i + '_y'], axis=1)
-        feature_create_bill['count_main_bank_id_' + i] = tmp.groupby('user_id')[i].count()
-        feature_create_bill['first_main_bank_id_' + i] = tmp.groupby('user_id')[i].first()
+        feature_create_bill['count_main_bank_id_' + i] = tmp.groupby('user_id')['bank_id'].count()
+        feature_create_bill['first_main_bank_id_' + i] = tmp.groupby('user_id')['bank_id'].first()
 
     bank_type = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     for i in bank_type:
