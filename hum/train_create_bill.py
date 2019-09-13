@@ -96,6 +96,13 @@ def feature_fun(df):
                            'var_last_payback_amount_0_t' + suffix_bt]
             feature_create_bill = pm(feature_create_bill, res)
 
+            tmp['diff_current_last_amount'] = tmp['current_bill_balance'] - tmp['last_bill_amount']
+            res = tmp.groupby('user_id')['diff_current_last_amount'].agg(['min', 'max', 'mean', 'sum', 'var'])
+            res.columns = ['min_diff_current_last_amount_t' + suffix_bt, 'max_diff_current_last_amount_t' + suffix_bt,
+                           'mean_diff_current_last_amount_t' + suffix_bt, 'sum_diff_current_last_amount_t' + suffix_bt,
+                           'var_diff_current_last_amount_t' + suffix_bt]
+            feature_create_bill = pm(feature_create_bill, res)
+
             tmp['diff_bill_payback_amount'] = tmp['last_bill_amount'] - tmp['last_payback_amount']
             res = tmp.groupby('user_id')['diff_bill_payback_amount'].agg(['min', 'max', 'mean', 'sum', 'var'])
             res.columns = ['min_diff_bill_payback_amount_t' + suffix_bt, 'max_diff_bill_payback_amount_t' + suffix_bt,
