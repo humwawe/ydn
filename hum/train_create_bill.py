@@ -24,6 +24,15 @@ def feature_fun(df):
     res = df.groupby('user_id')['repayment_status'].max() == 1
     feature_create_bill['is_repayment_status'] = res * 1
 
+    main_bank = ['bank_id', 'bill_time', 'credit_limit']
+    for i in main_bank:
+        tmp0 = train_credit_bill.groupby(['user_id', 'bank_id'])[i].count()
+        tmp1 = tmp0.groupby('user_id').max()
+        tmp = pm(tmp0, tmp1)
+        tmp = tmp[tmp[i + '_x'] == tmp[i + '_y']].reset_index().drop([i + '_x', i + '_y'], axis=1)
+        feature_create_bill['count_main_bank_id_' + i] = tmp.groupby('user_id')[i].count()
+        feature_create_bill['first_main_bank_id_' + i] = tmp.groupby('user_id')[i].first()
+
     bank_type = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     for i in bank_type:
         if i == -1:
@@ -37,7 +46,7 @@ def feature_fun(df):
         res['diff_mm_bill_time_b' + suffix_b] = res['max_bill_time_b' + suffix_b] - res['min_bill_time_b' + suffix_b]
         feature_create_bill = pm(feature_create_bill, res)
 
-    time_split = [0, 7, 15, 30, 60, 120, 240, 360, 720, 1200]
+    time_split = [0, 15, 35, 65, 100, 130, 160, 200, 380, 750, 1200]
     for i in time_split:
         if i == 0:
             tmp = df
@@ -57,7 +66,8 @@ def feature_fun(df):
                        'size_bank_id_12_t' + suffix_t]
         feature_create_bill = pm(feature_create_bill, res)
 
-        bank_type = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        # bank_type = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        bank_type = [-1]
         for j in bank_type:
             if j != -1:
                 tmp = tmp[tmp['bank_id'] == i]
@@ -69,8 +79,7 @@ def feature_fun(df):
                            'var_last_bill_amount_t' + suffix_bt]
             feature_create_bill = pm(feature_create_bill, res)
 
-            res = tmp[tmp['last_bill_amount'] > 0].groupby('user_id')['last_bill_amount'].agg(
-                ['min', 'mean', 'var'])
+            res = tmp[tmp['last_bill_amount'] > 0].groupby('user_id')['last_bill_amount'].agg(['min', 'mean', 'var'])
             res.columns = ['min_last_bill_amount_0_t' + suffix_bt, 'mean_last_bill_amount_0_t' + suffix_bt,
                            'var_last_bill_amount_0_t' + suffix_bt]
             feature_create_bill = pm(feature_create_bill, res)
@@ -92,6 +101,17 @@ def feature_fun(df):
             res.columns = ['min_diff_bill_payback_amount_t' + suffix_bt, 'max_diff_bill_payback_amount_t' + suffix_bt,
                            'mean_diff_bill_payback_amount_t' + suffix_bt, 'sum_diff_bill_payback_amount_t' + suffix_bt,
                            'var_diff_bill_payback_amount_t' + suffix_bt]
+            feature_create_bill = pm(feature_create_bill, res)
+
+            res = tmp.groupby('user_id')['credit_limit'].agg(['min', 'max', 'mean', 'sum', 'var'])
+            res.columns = ['min_credit_limit_t' + suffix_bt, 'max_credit_limit_t' + suffix_bt,
+                           'mean_credit_limit_t' + suffix_bt, 'sum_credit_limit_t' + suffix_bt,
+                           'var_credit_limit_t' + suffix_bt]
+            feature_create_bill = pm(feature_create_bill, res)
+
+            res = tmp[tmp['credit_limit'] > 0].groupby('user_id')['credit_limit'].agg(['min', 'mean', 'var'])
+            res.columns = ['min_credit_limit_0_t' + suffix_bt, 'mean_credit_limit_0_t' + suffix_bt,
+                           'var_credit_limit_0_t' + suffix_bt]
             feature_create_bill = pm(feature_create_bill, res)
 
     for col in feature_create_bill.columns:
