@@ -21,3 +21,13 @@ def ks(preds, real):
     fpr, tpr, thresholds = roc_curve(y_true, preds)
     ks_s = max(tpr - fpr)
     return 'ks', 1 - ks_s
+
+
+def month(s):
+    i = s.index("-")
+    return int(s[:i])
+
+
+def day(s):
+    i = s.index("-")
+    return int(s[i + 1:])
