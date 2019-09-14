@@ -60,8 +60,9 @@ def feature_fun(df):
 
         suffix_t = str(i)
         feature_create_bill['count_user_id' + suffix_t] = tmp.groupby('user_id')['user_id'].count()
-        feature_create_bill['count_bank_id' + suffix_t] = tmp.groupby(['user_id', 'bank_id'])[
-            'bank_id'].count().groupby('user_id').count()
+        res = tmp.groupby(['user_id', 'bank_id'])['bank_id'].count().groupby('user_id').agg(['min', 'max', 'count'])
+        res.columns = ['min_bank_id' + suffix_t, 'max_bank_id' + suffix_t, 'count_bank_id' + suffix_t]
+        feature_create_bill = pm(feature_create_bill, res)
 
         res = tmp.groupby(['user_id', 'bank_id']).size().unstack().fillna(0)
         res.columns = ['size_bank_id_0_t' + suffix_t, 'size_bank_id_1_t' + suffix_t, 'size_bank_id_2_t' + suffix_t,

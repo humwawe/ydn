@@ -27,7 +27,7 @@ def feature_fun(df):
             else:
                 tmp = df[df[col] == m]
 
-            suffix_1 = col + str(m);
+            suffix_1 = col + str(m)
             feature_behavior['size_user_id_' + suffix_1] = tmp.groupby('user_id').size()
 
             for i in ['behavior_type', 'weekday', 'month', 'day', 'day_10', 'sub_behavior_type_1',
@@ -40,7 +40,9 @@ def feature_fun(df):
                 feature_behavior = pm(feature_behavior, res)
 
                 t0 = tmp.groupby(['user_id', i])[i].count()
-                feature_behavior['count_' + suffix_2] = t0.groupby('user_id').count()
+                res = t0.groupby('user_id').agg(['min', 'max', 'count'])
+                res.columns = ['min_user_id' + suffix_2, 'max_user_id' + suffix_2, 'count_user_id' + suffix_2]
+                feature_behavior = pm(feature_behavior, res)
                 for j in ['min', 'max']:
                     suffix_3 = suffix_2 + '-' + j
                     if j == 'max':
