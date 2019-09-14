@@ -19,7 +19,6 @@ train_behaviors['day_10'] = (train_behaviors['mounth'] - 1) * 31 + train_behavio
 
 
 def feature_fun(df):
-
     def sub_feature(col, spl):
         feature_behavior = pd.DataFrame()
         for m in spl:
@@ -62,3 +61,12 @@ def feature_fun(df):
     f3 = sub_feature('behavior_type', spl3)
     feature_behaviors = pm(f1, f2)
     feature_behaviors = pm(feature_behaviors, f3)
+
+    for col in feature_behaviors.columns:
+        if tas(feature_behaviors, col):
+            print(col)
+            feature_behaviors.drop(col, axis=1, inplace=True)
+
+    print(feature_behaviors.shape)
+
+    feature_behaviors.to_csv(feature_train_behaviors_path)
