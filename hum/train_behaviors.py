@@ -40,8 +40,9 @@ def feature_fun(df):
                 feature_behavior = pm(feature_behavior, res)
 
                 t0 = tmp.groupby(['user_id', i])[i].count()
-                res = t0.groupby('user_id').agg(['min', 'max', 'count'])
-                res.columns = ['min_user_id' + suffix_2, 'max_user_id' + suffix_2, 'count_user_id' + suffix_2]
+                res = t0.groupby('user_id').agg(['min', 'max', 'count', 'mean', 'sum'])
+                res.columns = ['min_user_id' + suffix_2, 'max_user_id' + suffix_2, 'count_user_id' + suffix_2,
+                               'mean_user_id' + suffix_2, 'sum_user_id' + suffix_2]
                 feature_behavior = pm(feature_behavior, res)
                 for j in ['min', 'max']:
                     suffix_3 = suffix_2 + '-' + j
