@@ -79,14 +79,6 @@ def feature_fun(df):
                        'mean_bank_id' + suffix_t, 'sum_bank_id' + suffix_t]
         feature_create_bill = pm(feature_create_bill, res)
 
-        res = tmp.groupby(['user_id', 'bank_id']).size().unstack().fillna(0)
-        res.columns = ['size_bank_id_0_t' + suffix_t, 'size_bank_id_1_t' + suffix_t, 'size_bank_id_2_t' + suffix_t,
-                       'size_bank_id_3_t' + suffix_t, 'size_bank_id_4_t' + suffix_t, 'size_bank_id_5_t' + suffix_t,
-                       'size_bank_id_6_t' + suffix_t, 'size_bank_id_7_t' + suffix_t, 'size_bank_id_8_t' + suffix_t,
-                       'size_bank_id_9_t' + suffix_t, 'size_bank_id_10_t' + suffix_t, 'size_bank_id_11_t' + suffix_t,
-                       'size_bank_id_12_t' + suffix_t]
-        feature_create_bill = pm(feature_create_bill, res)
-
         # bank_type = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         bank_type = [-1]
         for j in bank_type:
@@ -106,18 +98,20 @@ def feature_fun(df):
                 feature_create_bill = pm(feature_create_bill, res)
 
             tmp['diff_current_last_amount'] = tmp['current_bill_balance'] - tmp['last_bill_amount']
-            res = tmp.groupby('user_id')['diff_current_last_amount'].agg(['min', 'max', 'mean', 'sum', 'var'])
-            res.columns = ['min_diff_current_last_amount_t' + suffix_bt, 'max_diff_current_last_amount_t' + suffix_bt,
-                           'mean_diff_current_last_amount_t' + suffix_bt, 'sum_diff_current_last_amount_t' + suffix_bt,
-                           'var_diff_current_last_amount_t' + suffix_bt]
-            feature_create_bill = pm(feature_create_bill, res)
-
+            tmp['per_current_last_amount'] = tmp['diff_current_last_amount'] / tmp['last_bill_amount']
             tmp['diff_bill_payback_amount'] = tmp['last_bill_amount'] - tmp['last_payback_amount']
-            res = tmp.groupby('user_id')['diff_bill_payback_amount'].agg(['min', 'max', 'mean', 'sum', 'var'])
-            res.columns = ['min_diff_bill_payback_amount_t' + suffix_bt, 'max_diff_bill_payback_amount_t' + suffix_bt,
-                           'mean_diff_bill_payback_amount_t' + suffix_bt, 'sum_diff_bill_payback_amount_t' + suffix_bt,
-                           'var_diff_bill_payback_amount_t' + suffix_bt]
-            feature_create_bill = pm(feature_create_bill, res)
+            tmp['per_bill_payback_amount'] = tmp['diff_bill_payback_amount'] / tmp['last_payback_amount']
+            for cc in ['diff_current_last_amount', 'diff_bill_payback_amount']:
+                suffix_bt_cc = suffix_bt + '_cc' + cc
+                res = tmp.groupby('user_id')[cc].agg(['min', 'max', 'mean', 'sum', 'var'])
+                res.columns = ['min_t' + suffix_bt_cc, 'max_t' + suffix_bt_cc, 'mean_t' + suffix_bt_cc,
+                               'sum_t' + suffix_bt_cc, 'var_t' + suffix_bt_cc]
+                feature_create_bill = pm(feature_create_bill, res)
+            for cc in ['per_current_last_amount', 'per_bill_payback_amount']:
+                suffix_bt_cc = suffix_bt + '_cc' + cc
+                res = tmp.groupby('user_id')[cc].agg(['min', 'max', 'mean'])
+                res.columns = ['min_t' + suffix_bt_cc, 'max_t' + suffix_bt_cc, 'mean_t' + suffix_bt_cc, ]
+                feature_create_bill = pm(feature_create_bill, res)
 
     for col in feature_create_bill.columns:
         if tas(feature_create_bill, col):

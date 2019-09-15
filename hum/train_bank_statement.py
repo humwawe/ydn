@@ -43,7 +43,7 @@ def feature_fun(df):
     res = df.groupby('user_id')['income_type'].max() == 1
     feature_bank_statement['is_income_type'] = res * 1
 
-    time_split = [0, 7, 15, 30, 60, 120, 240, 360]
+    time_split = [0, 7, 15, 30, 65, 100, 130, 200, 270, 360]
     for i in time_split:
         if i == 0:
             tmp = df
@@ -62,12 +62,13 @@ def feature_fun(df):
         feature_bank_statement = pm(feature_bank_statement, res)
 
         res = tmp.groupby(['user_id', 'transaction_type'])['transaction_amount'].agg(
-            ['min', 'max', 'mean', 'sum', 'var']).unstack().fillna(0)
+            ['min', 'max', 'mean', 'sum', 'var', 'count']).unstack().fillna(0)
         res.columns = ['min_0_transaction_amount_t' + suffix_t, 'min_1_transaction_amount_t' + suffix_t,
                        'max_0_transaction_amount_t' + suffix_t, 'max_1_transaction_amount_t' + suffix_t,
                        'mean_0_transaction_amount_t' + suffix_t, 'mean_1_transaction_amount_t' + suffix_t,
                        'sum_0_transaction_amount_t' + suffix_t, 'sum_1_transaction_amount_t' + suffix_t,
-                       'var_0_transaction_amount_t' + suffix_t, 'var_1_transaction_amount_t' + suffix_t]
+                       'var_0_transaction_amount_t' + suffix_t, 'var_1_transaction_amount_t' + suffix_t,
+                       'count_0_transaction_amount_t' + suffix_t, 'count_1_transaction_amount_t' + suffix_t]
         feature_bank_statement = pm(feature_bank_statement, res)
 
     for col in feature_bank_statement.columns:
