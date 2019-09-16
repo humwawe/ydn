@@ -31,3 +31,11 @@ def month(s):
 def day(s):
     i = s.index("-")
     return int(s[i + 1:])
+
+
+def ten_day(s):
+    if s <= 10:
+        return 1
+    elif s <= 20:
+        return 2
+    return 3
