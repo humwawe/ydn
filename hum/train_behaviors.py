@@ -15,7 +15,7 @@ train_behaviors.head(100)
 
 train_behaviors['month'] = train_behaviors['date'].apply(month)
 train_behaviors['day'] = train_behaviors['date'].apply(day)
-train_behaviors['quarter'] = (train_behaviors['month'] - 1) // 3 + 1
+train_behaviors['quarter'] = (train_behaviors['month'] - 1) // 6 + 1
 train_behaviors['ten_day'] = train_behaviors['day'].apply(ten_day)
 train_behaviors['day_10'] = (train_behaviors['month'] - 1) * 31 + train_behaviors['day']
 
@@ -61,7 +61,7 @@ def feature_fun(df):
     spl1 = [-1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     spl2 = [0, 1, 2, 3, 4, 5, 6]
     spl3 = [0, 1, 2, 3, 4, 5, 6, 7]
-    spl4 = [1, 2, 3, 4]
+    spl4 = [1, 2]
     spl5 = [1, 2, 3]
     f1 = sub_feature('month', spl1)
     f2 = sub_feature('weekday', spl2)

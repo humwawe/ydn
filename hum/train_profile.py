@@ -15,13 +15,12 @@ train_profile.head()
 
 def feature_fun(df):
     cols = ['sex', 'occupation', 'edu', 'married', 'residence']
-    feature_profile = df.groupby('user_id').first()
     for i in range(0, len(cols) - 1):
         for j in range(i + 1, len(cols)):
             index1 = cols[i]
             index2 = cols[j]
             col = index1 + '_' + index2
-            feature_profile[col] = 10 * df[index1] + df[index2]
+            df[col] = 10 * df[index1] + df[index2]
 
     for i in range(0, len(cols) - 2):
         for j in range(i + 1, len(cols) - 1):
@@ -30,7 +29,9 @@ def feature_fun(df):
                 index2 = cols[j]
                 index3 = cols[k]
                 col = index1 + '_' + index2 + '_' + index3
-                feature_profile[col] = 100 * df[index1] + 10 * df[index2] + df[index3]
+                df[col] = 100 * df[index1] + 10 * df[index2] + df[index3]
+
+    feature_profile = df.groupby('user_id').first()
 
     for col in feature_profile.columns:
         if tas(feature_profile, col):

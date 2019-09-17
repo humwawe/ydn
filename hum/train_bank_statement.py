@@ -43,7 +43,7 @@ def feature_fun(df):
     res = df.groupby('user_id')['income_type'].max() == 1
     feature_bank_statement['is_income_type'] = res * 1
 
-    time_split = [0, 7, 15, 30, 65, 100, 130, 200, 270, 360]
+    time_split = [0, 7, 15, 30, 65, 100, 130, 200, 270, 360, 450]
     for i in time_split:
         if i == 0:
             tmp = df

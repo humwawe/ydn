@@ -64,7 +64,7 @@ def feature_fun(df):
                            'var_0_bank_type_t' + suffix_btc]
             feature_create_bill = pm(feature_create_bill, res)
 
-    time_split = [0, 15, 35, 65, 100, 130, 160, 200, 380, 750, 1200]
+    time_split = [0, 15, 35, 65, 100, 130, 160, 200, 380, 750, 1200, 1500]
     for i in time_split:
         if i == 0:
             tmp = df
