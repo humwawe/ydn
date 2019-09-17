@@ -46,12 +46,13 @@ def feature_fun(df):
             tmp = df_2[df_2['bank_id'] == i]
 
         suffix_b = str(i)
-        res = tmp.groupby('user_id')['bill_time'].agg(['min', 'max', 'median'])
-        res.columns = ['min_bill_time_b' + suffix_b, 'max_bill_time_b' + suffix_b, 'median_bill_time_b' + suffix_b]
+        res = tmp.groupby('user_id')['bill_time'].agg(['min', 'max', 'median', 'mean', 'count'])
+        res.columns = ['min_bill_time_b' + suffix_b, 'max_bill_time_b' + suffix_b, 'median_bill_time_b' + suffix_b,
+                       'mean_bill_time_b' + suffix_b, 'count_bill_time_b' + suffix_b]
         res['diff_mm_bill_time_b' + suffix_b] = res['max_bill_time_b' + suffix_b] - res['min_bill_time_b' + suffix_b]
         feature_create_bill = pm(feature_create_bill, res)
 
-        for c in ['last_bill_amount', 'last_payback_amount', 'credit_limit']:
+        for c in ['last_bill_amount', 'last_payback_amount', 'current_bill_balance', 'credit_limit']:
             suffix_btc = suffix_b + '_c' + c
             res = tmp.groupby('user_id')[c].agg(['min', 'max', 'mean', 'sum', 'var'])
             res.columns = ['min_bank_type_t' + suffix_btc, 'max_bank_type_t' + suffix_btc,
@@ -86,7 +87,7 @@ def feature_fun(df):
                 tmp = tmp[tmp['bank_id'] == i]
 
             suffix_bt = suffix_t + '_b' + str(j)
-            for c in ['last_bill_amount', 'last_payback_amount', 'credit_limit']:
+            for c in ['last_bill_amount', 'last_payback_amount', 'current_bill_balance', 'credit_limit']:
                 suffix_btc = suffix_bt + '_c' + c
                 res = tmp.groupby('user_id')[c].agg(['min', 'max', 'mean', 'sum', 'var'])
                 res.columns = ['min_t' + suffix_btc, 'max_t' + suffix_btc, 'mean_t' + suffix_btc, 'sum_t' + suffix_btc,

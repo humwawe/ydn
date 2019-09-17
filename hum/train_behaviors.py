@@ -16,7 +16,7 @@ train_behaviors.head(100)
 train_behaviors['month'] = train_behaviors['date'].apply(month)
 train_behaviors['day'] = train_behaviors['date'].apply(day)
 train_behaviors['quarter'] = (train_behaviors['month'] - 1) // 6 + 1
-train_behaviors['ten_day'] = train_behaviors['day'].apply(ten_day)
+# train_behaviors['ten_day'] = train_behaviors['day'].apply(ten_day)
 train_behaviors['day_10'] = (train_behaviors['month'] - 1) * 31 + train_behaviors['day']
 
 
@@ -33,7 +33,7 @@ def feature_fun(df):
             feature_behavior['size_user_id_' + suffix_1] = tmp.groupby('user_id').size()
 
             for i in ['behavior_type', 'weekday', 'month', 'day', 'day_10', 'sub_behavior_type_1',
-                      'sub_behavior_type_2', 'quarter', 'ten_day']:
+                      'sub_behavior_type_2', 'quarter']:
                 if (i == col and m != -1) or (i == 'quarter' and col == 'month'):
                     continue
                 suffix_2 = suffix_1 + '-' + i
@@ -62,16 +62,16 @@ def feature_fun(df):
     spl2 = [0, 1, 2, 3, 4, 5, 6]
     spl3 = [0, 1, 2, 3, 4, 5, 6, 7]
     spl4 = [1, 2]
-    spl5 = [1, 2, 3]
+    # spl5 = [1, 2, 3]
     f1 = sub_feature('month', spl1)
     f2 = sub_feature('weekday', spl2)
     f3 = sub_feature('behavior_type', spl3)
     f4 = sub_feature('quarter', spl4)
-    f5 = sub_feature('ten_day', spl5)
+    # f5 = sub_feature('ten_day', spl5)
     feature_behaviors = pm(f1, f2)
     feature_behaviors = pm(feature_behaviors, f3)
     feature_behaviors = pm(feature_behaviors, f4)
-    feature_behaviors = pm(feature_behaviors, f5)
+    # feature_behaviors = pm(feature_behaviors, f5)
 
     for col in feature_behaviors.columns:
         if tas(feature_behaviors, col):
