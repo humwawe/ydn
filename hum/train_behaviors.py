@@ -71,7 +71,22 @@ def feature_fun(df):
     feature_behaviors = pm(f1, f2)
     feature_behaviors = pm(feature_behaviors, f3)
     feature_behaviors = pm(feature_behaviors, f4)
+
     # feature_behaviors = pm(feature_behaviors, f5)
+
+    def sub_behavior_count(col, sb_type):
+        feature_behavior = pd.DataFrame()
+        for i in sb_type:
+            suffix_sb = '_count_' + str(i)
+            feature_behavior[col + suffix_sb] = df[df[col] == i].groupby('user_id').size()
+        return feature_behavior
+
+    sb_type_1 = [54, 26, 82, 24, 30, 97, 3, 13, 28, 101, 98, 25, 107, 50, 39]
+    sb_type_2 = [33, 29, 50, 7, 25, 1, 14, 26, 27, 9, 28, 53, 37, 18, 22]
+    sb_f1 = sub_behavior_count('sub_behavior_type_1', sb_type_1)
+    sb_f2 = sub_behavior_count('sub_behavior_type_2', sb_type_2)
+    feature_behaviors = pm(feature_behaviors, sb_f1)
+    feature_behaviors = pm(feature_behaviors, sb_f2)
 
     for col in feature_behaviors.columns:
         if tas(feature_behaviors, col):
