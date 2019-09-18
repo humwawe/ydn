@@ -81,8 +81,10 @@ def feature_fun(df):
             feature_behavior[col + suffix_sb] = df[df[col] == i].groupby('user_id').size()
         return feature_behavior
 
-    sb_type_1 = [54, 26, 82, 24, 30, 97, 3, 13, 28, 101, 98, 25, 107, 50, 39]
-    sb_type_2 = [33, 29, 50, 7, 25, 1, 14, 26, 27, 9, 28, 53, 37, 18, 22]
+    sb_type_1 = [54, 26, 28, 82, 24, 97, 30, 3, 13, 25, 101, 107, 98, 39, 50, 56, 110, 79, 84, 105, 104, 62, 102, 63,
+                 73, 42, 45, 99, 103, 2, 100, 106, 7, 74, 11]
+    sb_type_2 = [33, 29, 7, 50, 27, 25, 1, 14, 26, 9, 53, 28, 18, 37, 22, 46, 13, 31, 57, 47, 2, 48, 4, 21, 44, 0, 8,
+                 15, 39, 32, 17, 52, 45, 3, 16]
     sb_f1 = sub_behavior_count('sub_behavior_type_1', sb_type_1)
     sb_f2 = sub_behavior_count('sub_behavior_type_2', sb_type_2)
     feature_behaviors = pm(feature_behaviors, sb_f1)

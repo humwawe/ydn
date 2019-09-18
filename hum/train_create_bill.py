@@ -129,8 +129,9 @@ def feature_fun(df):
             for cc in ['per_current_last_amount', 'per_bill_payback_amount', 'per_credit_current_amount']:
                 suffix_bt_cc = suffix_bt + '_cc' + cc
                 res = tmp[(tmp[cc] != float("inf")) & (tmp[cc] != float("-inf"))].groupby('user_id')[cc].agg(
-                    ['min', 'max', 'mean'])
-                res.columns = ['min_t' + suffix_bt_cc, 'max_t' + suffix_bt_cc, 'mean_t' + suffix_bt_cc, ]
+                    ['min', 'max', 'mean', 'median'])
+                res.columns = ['min_t' + suffix_bt_cc, 'max_t' + suffix_bt_cc, 'mean_t' + suffix_bt_cc,
+                               'median_t' + suffix_bt_cc, ]
                 feature_create_bill = pm(feature_create_bill, res)
 
     for col in feature_create_bill.columns:
