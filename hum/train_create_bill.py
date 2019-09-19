@@ -47,9 +47,10 @@ def feature_fun(df):
 
         suffix_b = str(i)
 
-        res = tmp.groupby('user_id')['bill_time'].agg(['min', 'max', 'median', 'mean', 'count', 'var'])
+        res = tmp.groupby('user_id')['bill_time'].agg(['min', 'max', 'median', 'mean', 'count', 'var', 'skew'])
         res.columns = ['min_bill_time_b' + suffix_b, 'max_bill_time_b' + suffix_b, 'median_bill_time_b' + suffix_b,
-                       'mean_bill_time_b' + suffix_b, 'count_bill_time_b' + suffix_b, 'var_bill_time_b' + suffix_b]
+                       'mean_bill_time_b' + suffix_b, 'count_bill_time_b' + suffix_b, 'var_bill_time_b' + suffix_b,
+                       'skew_bill_time_b' + suffix_b]
         res['diff_mm_bill_time_b' + suffix_b] = res['max_bill_time_b' + suffix_b] - res['min_bill_time_b' + suffix_b]
         feature_create_bill = pm(feature_create_bill, res)
 
@@ -60,10 +61,11 @@ def feature_fun(df):
                 res = tmp.groupby('user_id')[c].min() < 0
                 feature_create_bill['is_' + suffix_btc] = res * 1
 
-                res = tmp.groupby('user_id')[c].agg(['min', 'max', 'mean', 'sum', 'var', 'median'])
+                res = tmp.groupby('user_id')[c].agg(['min', 'max', 'mean', 'sum', 'var', 'median', 'skew'])
                 res.columns = ['min_bank_type_t' + suffix_btc, 'max_bank_type_t' + suffix_btc,
                                'mean_bank_type_t' + suffix_btc, 'sum_bank_type_t' + suffix_btc,
-                               'var_bank_type_t' + suffix_btc, 'median_bank_type_t' + suffix_btc]
+                               'var_bank_type_t' + suffix_btc, 'median_bank_type_t' + suffix_btc,
+                               'skew_bank_type_t' + suffix_btc]
                 feature_create_bill = pm(feature_create_bill, res)
 
                 res = tmp[tmp[c] > 0].groupby('user_id')[c].agg(['min', 'mean', 'var'])
@@ -71,13 +73,13 @@ def feature_fun(df):
                                'var_0_bank_type_t' + suffix_btc]
                 feature_create_bill = pm(feature_create_bill, res)
             else:
-                res = tmp.groupby('user_id')[c].agg(['min', 'max', 'mean', 'var', 'median'])
+                res = tmp.groupby('user_id')[c].agg(['min', 'max', 'mean', 'var', 'median', 'skew'])
                 res.columns = ['min_bank_type_t' + suffix_btc, 'max_bank_type_t' + suffix_btc,
                                'mean_bank_type_t' + suffix_btc, 'var_bank_type_t' + suffix_btc,
-                               'median_bank_type_t' + suffix_btc]
+                               'median_bank_type_t' + suffix_btc, 'skew_bank_type_t' + suffix_btc]
                 feature_create_bill = pm(feature_create_bill, res)
 
-    time_split = [0, 15, 35, 65, 100, 130, 160, 200, 380, 750, 1200, 1500, -1, -2]
+    time_split = [0, 35, 65, 100, 130, 160, 200, 380, 750, 1200, 1500, -1, -2]
     for i in time_split:
         if i == 0:
             tmp = df
@@ -105,9 +107,9 @@ def feature_fun(df):
             suffix_bt = suffix_t + '_b' + str(j)
             for c in ['last_bill_amount', 'last_payback_amount', 'current_bill_balance', 'credit_limit']:
                 suffix_btc = suffix_bt + '_c' + c
-                res = tmp.groupby('user_id')[c].agg(['min', 'max', 'mean', 'sum', 'var', 'median'])
+                res = tmp.groupby('user_id')[c].agg(['min', 'max', 'mean', 'sum', 'var', 'median', 'skew'])
                 res.columns = ['min_t' + suffix_btc, 'max_t' + suffix_btc, 'mean_t' + suffix_btc, 'sum_t' + suffix_btc,
-                               'var_t' + suffix_btc, 'median_t' + suffix_btc]
+                               'var_t' + suffix_btc, 'median_t' + suffix_btc, 'skew_t' + suffix_btc]
                 feature_create_bill = pm(feature_create_bill, res)
 
                 res = tmp[tmp[c] > 0].groupby('user_id')[c].agg(['min', 'mean', 'var'])
@@ -122,9 +124,10 @@ def feature_fun(df):
             tmp['per_credit_current_amount'] = tmp['diff_credit_current_amount'] / tmp['credit_limit']
             for cc in ['diff_current_last_amount', 'diff_bill_payback_amount', 'diff_credit_current_amount']:
                 suffix_bt_cc = suffix_bt + '_cc' + cc
-                res = tmp.groupby('user_id')[cc].agg(['min', 'max', 'mean', 'sum', 'var', 'median'])
+                res = tmp.groupby('user_id')[cc].agg(['min', 'max', 'mean', 'sum', 'var', 'median', 'skew'])
                 res.columns = ['min_t' + suffix_bt_cc, 'max_t' + suffix_bt_cc, 'mean_t' + suffix_bt_cc,
-                               'sum_t' + suffix_bt_cc, 'var_t' + suffix_bt_cc, 'median_t' + suffix_bt_cc]
+                               'sum_t' + suffix_bt_cc, 'var_t' + suffix_bt_cc, 'median_t' + suffix_bt_cc,
+                               'skew_t' + suffix_bt_cc]
                 feature_create_bill = pm(feature_create_bill, res)
             for cc in ['per_current_last_amount', 'per_bill_payback_amount', 'per_credit_current_amount']:
                 suffix_bt_cc = suffix_bt + '_cc' + cc

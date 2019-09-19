@@ -21,8 +21,18 @@ feature_test_profile_path = feature_path + "feature_test_profile.csv"
 feature_test_behaviors_path = feature_path + "feature_test_behaviors.csv"
 feature_test_credit_bill_path = feature_path + "feature_test_creditBill.csv"
 feature_test_bank_statement_path = feature_path + "feature_test_bank_statement.csv"
+feature_profile_path = feature_path + "feature_profile.csv"
 
 feature_train_label_path = feature_path + "feature_train_label.csv"
+
+cv_result_path = "tmp/cv_result.pickle"
+
+lda_feature_path = "../wangzhen/data/lda_feature.p"
+
+# profile_feature_path = '../xujunfeng/df_profile.pkl'
+
+w2v_feature_train_path = "../xujunfeng/w2v_20/train_w2v.csv"
+w2v_feature_test_path = "../xujunfeng/w2v_20/test_w2v.csv"
 
 day_second = 86400
 statement_max_time = 44243

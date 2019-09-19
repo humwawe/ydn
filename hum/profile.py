@@ -4,23 +4,25 @@ import util
 
 importlib.reload(constants)
 importlib.reload(util)
-from constants import train_profile_path, feature_train_profile_path
+from constants import train_profile_path, test_profile_path, feature_train_profile_path, feature_test_profile_path
 from util import *
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 
 train_profile = pd.read_csv(train_profile_path)
 train_profile.columns = ['user_id', 'sex', 'occupation', 'edu', 'married', 'residence']
 train_profile.head()
 
 
-def feature_fun(df):
+def feature_fun(df1, df2):
+    tmp = pd.concat([df1, df2], axis=0)
     cols = ['sex', 'occupation', 'edu', 'married', 'residence']
     for i in range(0, len(cols) - 1):
         for j in range(i + 1, len(cols)):
             index1 = cols[i]
             index2 = cols[j]
             col = index1 + '_' + index2
-            df[col] = 10 * df[index1] + df[index2]
+            tmp[col] = tmp[index1].astype('str') + '_' + tmp[index2].astype('str')
 
     for i in range(0, len(cols) - 2):
         for j in range(i + 1, len(cols) - 1):
@@ -29,9 +31,16 @@ def feature_fun(df):
                 index2 = cols[j]
                 index3 = cols[k]
                 col = index1 + '_' + index2 + '_' + index3
-                df[col] = 100 * df[index1] + 10 * df[index2] + df[index3]
+                tmp[col] = tmp[index1].astype('str') + '_' + tmp[index2].astype('str') + '_' + tmp[index3].astype('str')
 
-    feature_profile = df.groupby('user_id').first()
+    category_features = [x for x in tmp.columns if x not in ['user_id']]
+
+    for feature in category_features:
+        enc = LabelEncoder()
+        tmp[feature] = enc.fit_transform(tmp[feature])
+        tmp[feature + '_count'] = tmp.groupby(feature)['user_id'].transform('count')
+
+    feature_profile = tmp.groupby('user_id').first()
 
     for col in feature_profile.columns:
         if tas(feature_profile, col):
@@ -40,4 +49,5 @@ def feature_fun(df):
 
     print(feature_profile.shape)
 
-    feature_profile.to_csv(feature_train_profile_path)
+    feature_profile.iloc[:df1.shape[0]].to_csv(feature_train_profile_path)
+    feature_profile.iloc[:df1.shape[0]].to_csv(feature_test_profile_path)
