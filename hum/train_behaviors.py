@@ -62,17 +62,16 @@ def feature_fun(df):
     spl2 = [0, 1, 2, 3, 4, 5, 6]
     spl3 = [0, 1, 2, 3, 4, 5, 6, 7]
     spl4 = [1, 2]
-    # spl5 = [1, 2, 3]
+    spl5 = [1, 2, 3]
     f1 = sub_feature('month', spl1)
     f2 = sub_feature('weekday', spl2)
     f3 = sub_feature('behavior_type', spl3)
     f4 = sub_feature('quarter', spl4)
-    # f5 = sub_feature('ten_day', spl5)
+    f5 = sub_feature('ten_day', spl5)
     feature_behaviors = pm(f1, f2)
     feature_behaviors = pm(feature_behaviors, f3)
     feature_behaviors = pm(feature_behaviors, f4)
-
-    # feature_behaviors = pm(feature_behaviors, f5)
+    feature_behaviors = pm(feature_behaviors, f5)
 
     def sub_behavior_count(col, sb_type):
         feature_behavior = pd.DataFrame()
@@ -96,5 +95,3 @@ def feature_fun(df):
             feature_behaviors.drop(col, axis=1, inplace=True)
 
     print(feature_behaviors.shape)
-
-    feature_behaviors.to_csv(feature_train_behaviors_path)

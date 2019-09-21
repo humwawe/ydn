@@ -29,6 +29,8 @@ cv_result_path = "tmp/cv_result.pickle"
 
 lda_feature_path = "../wangzhen/data/lda_feature.p"
 
+bill_feature_path = "../xujunfeng/FE_creditbill.pkl"
+
 # profile_feature_path = '../xujunfeng/df_profile.pkl'
 
 w2v_feature_train_path = "../xujunfeng/w2v_20/train_w2v.csv"
@@ -37,3 +39,5 @@ w2v_feature_test_path = "../xujunfeng/w2v_20/test_w2v.csv"
 day_second = 86400
 statement_max_time = 44243
 bill_max_time = 44724
+t_bill_max_time = 47100
+bill_time_ratio = 2.5

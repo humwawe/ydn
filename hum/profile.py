@@ -40,7 +40,7 @@ def feature_fun(df1, df2):
         tmp[feature] = enc.fit_transform(tmp[feature])
         tmp[feature + '_count'] = tmp.groupby(feature)['user_id'].transform('count')
 
-    feature_profile = tmp.groupby('user_id').first()
+    feature_profile = tmp
 
     for col in feature_profile.columns:
         if tas(feature_profile, col):
@@ -49,5 +49,5 @@ def feature_fun(df1, df2):
 
     print(feature_profile.shape)
 
-    feature_profile.iloc[:df1.shape[0]].to_csv(feature_train_profile_path)
-    feature_profile.iloc[:df1.shape[0]].to_csv(feature_test_profile_path)
+    feature_profile.iloc[:df1.shape[0]].to_csv(feature_train_profile_path, index=False)
+    feature_profile.iloc[df1.shape[0]:].to_csv(feature_test_profile_path, index=False)
