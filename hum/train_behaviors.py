@@ -32,8 +32,7 @@ def feature_fun(df):
             suffix_1 = col + str(m)
             feature_behavior['size_user_id_' + suffix_1] = tmp.groupby('user_id').size()
 
-            for i in ['behavior_type', 'weekday', 'month', 'day', 'day_10', 'sub_behavior_type_1',
-                      'sub_behavior_type_2', 'quarter']:
+            for i in ['behavior_type', 'weekday', 'month', 'day', 'day_10', 'sub_behavior_type_1', 'sub_behavior_type_2', 'quarter']:
                 if (i == col and m != -1) or (i == 'quarter' and col == 'month'):
                     continue
                 suffix_2 = suffix_1 + '-' + i
@@ -42,9 +41,9 @@ def feature_fun(df):
                 feature_behavior = pm(feature_behavior, res)
 
                 t0 = tmp.groupby(['user_id', i])[i].count()
-                res = t0.groupby('user_id').agg(['min', 'max', 'count', 'mean', 'sum'])
-                res.columns = ['min_user_id' + suffix_2, 'max_user_id' + suffix_2, 'count_user_id' + suffix_2,
-                               'mean_user_id' + suffix_2, 'sum_user_id' + suffix_2]
+                res = t0.groupby('user_id').agg(['min', 'max', 'count', 'mean', 'sum', 'median', 'var'])
+                res.columns = ['min_user_id' + suffix_2, 'max_user_id' + suffix_2, 'count_user_id' + suffix_2, 'mean_user_id' + suffix_2,
+                               'sum_user_id' + suffix_2, 'median_user_id' + suffix_2, 'var_user_id' + suffix_2]
                 feature_behavior = pm(feature_behavior, res)
                 for j in ['min', 'max']:
                     suffix_3 = suffix_2 + '-' + j
@@ -80,10 +79,10 @@ def feature_fun(df):
             feature_behavior[col + suffix_sb] = df[df[col] == i].groupby('user_id').size()
         return feature_behavior
 
-    sb_type_1 = [54, 26, 28, 82, 24, 97, 30, 3, 13, 25, 101, 107, 98, 39, 50, 56, 110, 79, 84, 105, 104, 62, 102, 63,
-                 73, 42, 45, 99, 103, 2, 100, 106, 7, 74, 11]
-    sb_type_2 = [33, 29, 7, 50, 27, 25, 1, 14, 26, 9, 53, 28, 18, 37, 22, 46, 13, 31, 57, 47, 2, 48, 4, 21, 44, 0, 8,
-                 15, 39, 32, 17, 52, 45, 3, 16]
+    sb_type_1 = [54, 26, 28, 82, 24, 97, 30, 3, 13, 25, 101, 107, 98, 39, 50, 56, 110, 79, 84, 105, 104, 62, 102, 63, 73, 42, 45, 99, 103, 2, 100,
+                 106, 7, 74, 11, 90, 109, 108, 61, 21]
+    sb_type_2 = [33, 29, 7, 50, 27, 25, 1, 14, 26, 9, 53, 28, 18, 37, 22, 46, 13, 31, 57, 47, 2, 48, 4, 21, 44, 0, 8, 15, 39, 32, 17, 52, 45, 3, 16,
+                 38, 24, 58, 34, 5]
     sb_f1 = sub_behavior_count('sub_behavior_type_1', sb_type_1)
     sb_f2 = sub_behavior_count('sub_behavior_type_2', sb_type_2)
     feature_behaviors = pm(feature_behaviors, sb_f1)

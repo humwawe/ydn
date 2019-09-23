@@ -33,21 +33,23 @@ def feature_fun(df):
             tmp = df_2[df_2['transaction_type'] == i]
 
         suffix_t = str(i)
-        res = tmp.groupby('user_id')['statement_time'].agg(['min', 'max', 'median', 'mean', 'var', 'skew'])
-        res.columns = ['min_statement_time_t' + suffix_t, 'max_statement_time_t' + suffix_t,
-                       'median_statement_time_t' + suffix_t, 'mean_statement_time_t' + suffix_t,
-                       'var_statement_time_t' + suffix_t, 'skew_statement_time_t' + suffix_t]
-        res['diff_mm_statement_time_t' + suffix_t] = res['max_statement_time_t' + suffix_t] - res[
-            'min_statement_time_t' + suffix_t]
+        res = tmp.groupby('user_id')['statement_time'].agg(['min', 'max', 'median', 'mean', 'var', 'skew', 'count'])
+        res.columns = ['min_statement_time_t' + suffix_t, 'max_statement_time_t' + suffix_t, 'median_statement_time_t' + suffix_t,
+                       'mean_statement_time_t' + suffix_t, 'var_statement_time_t' + suffix_t, 'skew_statement_time_t' + suffix_t,
+                       'count_statement_time_t' + suffix_t]
+        res['diff_mm_statement_time_t' + suffix_t] = res['max_statement_time_t' + suffix_t] - res['min_statement_time_t' + suffix_t]
+        res['per_mm_statement_time_t' + suffix_t] = res['diff_mm_statement_time_t' + suffix_t] / res['max_statement_time_t' + suffix_t]
         feature_bank_statement = pm(feature_bank_statement, res)
 
     res = df.groupby('user_id')['income_type'].max() == 1
     feature_bank_statement['is_income_type'] = res * 1
 
-    time_split = [0, 7, 15, 30, 65, 100, 130, 200, 270, 360, 450]
+    time_split = [0, 7, 15, 30, 65, 100, 130, 200, 270, 360, 450, -1]
     for i in time_split:
         if i == 0:
             tmp = df
+        elif i == -1:
+            tmp = df[(df['statement_time'] >= statement_max_time - 185) & (df['statement_time'] < statement_max_time - 95)]
         else:
             tmp = df[df['statement_time'] > statement_max_time - i]
 
@@ -56,22 +58,21 @@ def feature_fun(df):
         res.columns = ['size_transaction_type_0_t' + suffix_t, 'size_transaction_type_1_t' + suffix_t]
         feature_bank_statement = pm(feature_bank_statement, res)
 
-        res = tmp.groupby('user_id')['transaction_amount'].agg(['count', 'min', 'max', 'mean', 'sum', 'var', 'skew'])
+        res = tmp.groupby('user_id')['transaction_amount'].agg(['count', 'min', 'max', 'mean', 'sum', 'var', 'skew', 'median'])
         res.columns = ['count_transaction_amount_t' + suffix_t, 'min_transaction_amount_t' + suffix_t,
                        'max_transaction_amount_t' + suffix_t, 'mean_transaction_amount_t' + suffix_t,
                        'sum_transaction_amount_t' + suffix_t, 'var_transaction_amount_t' + suffix_t,
-                       'skew_transaction_amount_t' + suffix_t]
+                       'skew_transaction_amount_t' + suffix_t, 'median_transaction_amount_t' + suffix_t]
         feature_bank_statement = pm(feature_bank_statement, res)
 
         res = tmp.groupby(['user_id', 'transaction_type'])['transaction_amount'].agg(
-            ['min', 'max', 'mean', 'sum', 'var', 'count', 'skew']).unstack().fillna(0)
-        res.columns = ['min_0_transaction_amount_t' + suffix_t, 'min_1_transaction_amount_t' + suffix_t,
-                       'max_0_transaction_amount_t' + suffix_t, 'max_1_transaction_amount_t' + suffix_t,
-                       'mean_0_transaction_amount_t' + suffix_t, 'mean_1_transaction_amount_t' + suffix_t,
-                       'sum_0_transaction_amount_t' + suffix_t, 'sum_1_transaction_amount_t' + suffix_t,
-                       'var_0_transaction_amount_t' + suffix_t, 'var_1_transaction_amount_t' + suffix_t,
-                       'count_0_transaction_amount_t' + suffix_t, 'count_1_transaction_amount_t' + suffix_t,
-                       'skew_0_transaction_amount_t' + suffix_t, 'skew_1_transaction_amount_t' + suffix_t]
+            ['min', 'max', 'mean', 'sum', 'var', 'count', 'skew', 'median']).unstack().fillna(0)
+        res.columns = ['min_0_transaction_amount_t' + suffix_t, 'min_1_transaction_amount_t' + suffix_t, 'max_0_transaction_amount_t' + suffix_t,
+                       'max_1_transaction_amount_t' + suffix_t, 'mean_0_transaction_amount_t' + suffix_t, 'mean_1_transaction_amount_t' + suffix_t,
+                       'sum_0_transaction_amount_t' + suffix_t, 'sum_1_transaction_amount_t' + suffix_t, 'var_0_transaction_amount_t' + suffix_t,
+                       'var_1_transaction_amount_t' + suffix_t, 'count_0_transaction_amount_t' + suffix_t, 'count_1_transaction_amount_t' + suffix_t,
+                       'skew_0_transaction_amount_t' + suffix_t, 'skew_1_transaction_amount_t' + suffix_t, 'median_0_transaction_amount_t' + suffix_t,
+                       'median_1_transaction_amount_t' + suffix_t]
         feature_bank_statement = pm(feature_bank_statement, res)
 
     for col in feature_bank_statement.columns:
